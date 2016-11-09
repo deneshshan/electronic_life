@@ -1,25 +1,21 @@
 package main
 
-import (
-	"display"
-)
+//type entity struct {
+	//rect Rectangle
+//}
 
-type entity struct {
-	rect Rectangle
-}
+//func NewEntity() (ent *entity) {
+	//rectangle = new(display.Rectangle)
+	//rectangle.x = 64.0
+	//rectangle.y = 64.0
+	//rectangle.w = 32.0
+	//rectangle.h = 32.0
 
-func NewEntity() (ent *entity) {
-	rectangle = new(display.Rectangle)
-	rectangle.x = 64.0
-	rectangle.y = 64.0
-	rectangle.w = 32.0
-	rectangle.h = 32.0
+	//ent = &entity{}
+	//ent.rect = rectangle
 
-	ent = &entity{}
-	ent.rect = rectangle
+	//return ent
+//}
 
-	return ent
-}
-
-func (ent *entity) MoveInside(rect Rectangle, parent Rectangle) {
-}
+//func (ent *entity) MoveInside(rect Rectangle, parent Rectangle) {
+//}
