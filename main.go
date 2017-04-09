@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/deneshshan/electronic_life/display"
 	"github.com/veandco/go-sdl2/sdl"
 	"os"
 )
@@ -24,7 +25,7 @@ func run() {
 	handle_error(err, "Failed to create renderer", 2)
 	defer renderer.Destroy()
 
-	events := newEvents()
+	events := display.NewEvents()
 
 	for {
 		events.monitor()

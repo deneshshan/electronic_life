@@ -1,4 +1,4 @@
-package main
+package display
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
@@ -8,10 +8,11 @@ type Events struct {
 	quit bool
 }
 
-func newEvents() (events *Events) {
+func NewEvents() (events *Events) {
 	events = &Events{
 		quit: false,
 	}
+
 	return events
 }
 
