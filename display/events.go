@@ -5,22 +5,22 @@ import (
 )
 
 type Events struct {
-	quit bool
+	Quit bool
 }
 
 func NewEvents() (events *Events) {
 	events = &Events{
-		quit: false,
+		Quit: false,
 	}
 
 	return events
 }
 
-func (events *Events) monitor() {
+func (events *Events) Monitor() {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch event.(type) {
 		case *sdl.QuitEvent:
-			events.quit = true
+			events.Quit = true
 			break
 		}
 	}

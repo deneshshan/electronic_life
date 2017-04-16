@@ -3,49 +3,20 @@ package main
 import (
 	"fmt"
 	"github.com/deneshshan/electronic_life/display"
-	"github.com/veandco/go-sdl2/sdl"
+	"github.com/deneshshan/electronic_life/entities"
 	"os"
 )
 
-const windowTitle string = "Electronic Life"
-
-var winWidth, winHeight int = 800, 600
-
 func main() {
-	run()
-}
 
-func run() {
-	window, err := sdl.CreateWindow(windowTitle, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		winWidth, winHeight, sdl.WINDOW_SHOWN)
-	handle_error(err, "Failed to create window", 1)
-	defer window.Destroy()
-
-	renderer, err := sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
-	handle_error(err, "Failed to create renderer", 2)
-	defer renderer.Destroy()
-
-	events := display.NewEvents()
-
-	for {
-		events.monitor()
-		if events.quit == true {
-			fmt.Println("bye !!!!")
-			break
-		}
-
-		err = renderer.SetDrawColor(0, 92, 9, 100)
-		err = renderer.Clear()
-		renderer.Present()
-		handle_error(err, "Failed when interacting with renderer", 2)
-	}
+	handle_error(display.Start())
 
 	os.Exit(0)
 }
 
-func handle_error(err error, message string, returnv int) {
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "{}: %s\n", message, err)
-		os.Exit(returnv)
+func handle_error(result display.RenderingResult) {
+	if result.Success != true {
+		fmt.Fprintf(os.Stderr, "{}: %s\n", result.Reason, result.Err)
+		os.Exit(result.ReturnValue)
 	}
 }
