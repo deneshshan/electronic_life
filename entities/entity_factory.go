@@ -1,42 +1,57 @@
 package entities
 
+import (
+	"github.com/looplab/fsm"
+)
+
 type EntityType int
 
 const (
-	Carrot EntityType = iota
-	Rabbit
+	carrot EntityType = iota
+	rabbit
 )
 
 type entityBuilder struct {
-	typeOption int
+}
+
+type rabbitBuilder struct {
+	entityBuilder
 }
 
 type EntityBuilder interface {
-	setType()
-	build()
+	setType(entityType EntityType) EntityBuilder
+	build() actor
 }
 
-func (eb *entityBuilder) Type(entityType EntityType) EntityBuilder {
-	eb.typeOption = entityType
-	return eb
+func Create(entityType EntityType) actor {
+	instance := &entityBuilder{}
+	entity := instance.setType(entityType).build()
+	return entity
 }
 
-func (eb *entityBuilder) Build() (EntityBuilder, error) {
-	switch eb.typeOption {
-	case EntityType.Rabbit:
-		entity := &Rabbit{Type: eb.typeOption}
-		entity.FSM = getRabbitFSM()
-		return entity
+func (eb entityBuilder) setType(entityType EntityType) EntityBuilder {
+	switch entityType {
+	case rabbit:
+		return &rabbitBuilder{}
 	default:
 		panic("EntityBuilder typeOption not recognised")
 	}
 }
 
-func getRabbitFSM() *fsm.FSM {
+func (eb *rabbitBuilder) build() actor {
+	entity := &Rabbit{}
+	entity.FSM = getRabbitFSM(entity)
+	return entity
 }
 
-func Create(entityType EntityType) *Entity {
-	instance := &entityBuilder{}
-	entity := instance.setType(entityType).build()
-	return entity
+func getRabbitFSM(sm stateMachine) *fsm.FSM {
+	fsm := fsm.NewFSM(
+		"searching",
+		fsm.Events{},
+		fsm.Callbacks{
+			"enter_state": func(e *fsm.Event) { sm.enterState(e) },
+		},
+	)
+
+	return fsm
 }

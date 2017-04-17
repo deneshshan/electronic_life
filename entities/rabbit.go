@@ -2,5 +2,7 @@ package entities
 
 type Rabbit struct {
 	Entity
-	Mover
+}
+
+func (r *Rabbit) act() {
 }
