@@ -8,7 +8,7 @@ type Events struct {
 	Quit bool
 }
 
-func NewEvents() (events *Events) {
+func newEvents() (events *Events) {
 	events = &Events{
 		Quit: false,
 	}
@@ -16,7 +16,7 @@ func NewEvents() (events *Events) {
 	return events
 }
 
-func (events *Events) Monitor() {
+func (events *Events) monitor() {
 	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
 		switch event.(type) {
 		case *sdl.QuitEvent:

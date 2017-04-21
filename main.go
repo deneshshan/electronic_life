@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/deneshshan/electronic_life/display"
-	"github.com/deneshshan/electronic_life/entities"
 	"os"
 )
 

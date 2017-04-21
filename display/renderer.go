@@ -10,7 +10,7 @@ const (
 	winHeight   int    = 600
 )
 
-type Renderer struct {
+type sdlContext struct {
 	window   *sdl.Window
 	renderer *sdl.Renderer
 }
@@ -18,10 +18,14 @@ type Renderer struct {
 type RenderingResult struct {
 	Success     bool
 	ReturnValue int
-	Reason      string
+	ErrorReason string
 	Err         error
 }
 
+// Initialises SDL and starts rendering the scene.
+//
+// Returns a RenderingResult wrapping up whether initialising rendering was successful.
+// Any error values are wrapped up in the RenderingResult
 func Start() RenderingResult {
 	window, err := sdl.CreateWindow(windowTitle, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		winWidth, winHeight, sdl.WINDOW_SHOWN)
@@ -34,10 +38,10 @@ func Start() RenderingResult {
 		return newErrorRendingResult("Failed to create renderer", 2, err)
 	}
 
-	displayRenderer := &Renderer{window: window, renderer: renderer}
-	defer destroy(displayRenderer)
+	context := &sdlContext{window: window, renderer: renderer}
+	defer destroy(context)
 
-	err = render(displayRenderer)
+	err = render(context)
 	if err != nil {
 		return newErrorRendingResult("Failed when interacting with renderer", 2, err)
 	}
@@ -45,26 +49,26 @@ func Start() RenderingResult {
 	return newSuccessRendingResult()
 }
 
-func newErrorRendingResult(reason string, returnValue int, err error) RenderingResult {
-	return RenderingResult{Success: false, Reason: reason, ReturnValue: returnValue, Err: err}
+func newErrorRendingResult(errorReason string, returnValue int, err error) RenderingResult {
+	return RenderingResult{Success: false, ErrorReason: errorReason, ReturnValue: returnValue, Err: err}
 }
 
 func newSuccessRendingResult() RenderingResult {
 	return RenderingResult{Success: true}
 }
 
-func render(displayRenderer *Renderer) error {
-	events := NewEvents()
+func render(context *sdlContext) error {
+	events := newEvents()
 
 	for {
-		events.Monitor()
+		events.monitor()
 		if events.Quit == true {
 			break
 		}
 
-		err := displayRenderer.renderer.SetDrawColor(0, 92, 9, 100)
-		err = displayRenderer.renderer.Clear()
-		displayRenderer.renderer.Present()
+		err := context.renderer.SetDrawColor(0, 92, 9, 100)
+		err = context.renderer.Clear()
+		context.renderer.Present()
 		if err != nil {
 			return err
 		}
@@ -73,7 +77,7 @@ func render(displayRenderer *Renderer) error {
 	return nil
 }
 
-func destroy(displayRenderer *Renderer) {
-	displayRenderer.window.Destroy()
-	displayRenderer.renderer.Destroy()
+func destroy(context *sdlContext) {
+	context.window.Destroy()
+	context.renderer.Destroy()
 }
