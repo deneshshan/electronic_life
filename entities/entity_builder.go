@@ -1,25 +1,26 @@
-package entities
+//package entities
 
-type EntityType int
+//import (
+	//"github.com/pkg/errors"
+//)
 
-const (
-	carrot EntityType = iota
-	rabbit
-)
+//type EntityType int
 
-type EntityBuilder interface {
-	setType(entityType EntityType) EntityBuilder
-	build() actor
-}
+//const (
+	//carrot EntityType = iota
+	//rabbit
+//)
 
-type entityBuilder struct {
-}
+//type buildable interface {
+	//build() actor
+//}
 
-func (eb entityBuilder) setType(entityType EntityType) EntityBuilder {
-	switch entityType {
-	case rabbit:
-		return &rabbitBuilder{}
-	default:
-		panic("EntityBuilder typeOption not recognised")
-	}
-}
+//func NewBuilder(entityType EntityType) (buildable, error) {
+	//switch entityType {
+	//case rabbit:
+		//return &rabbitBuilder{}, nil
+	//default:
+		//err := errors.New("EntityBuilder typeOption not recognised")
+		//return nil, errors.Wrap(err, "entityBuilder.SetType()")
+	//}
+//}

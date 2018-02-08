@@ -1,8 +1,8 @@
-package entities
+//package entities
 
-type Rabbit struct {
-	Entity
-}
+//type Rabbit struct {
+	//Entity
+//}
 
-func (r *Rabbit) act() {
-}
+//func (r *Rabbit) act() {
+//}

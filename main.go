@@ -8,14 +8,8 @@ import (
 
 func main() {
 
-	handle_error(display.Start())
+	display.NewDisplay()
 
+	fmt.Println("Bye!!")
 	os.Exit(0)
-}
-
-func handle_error(result display.RenderingResult) {
-	if result.Success != true {
-		fmt.Fprintf(os.Stderr, "{}: %s\n", result.Reason, result.Err)
-		os.Exit(result.ReturnValue)
-	}
 }

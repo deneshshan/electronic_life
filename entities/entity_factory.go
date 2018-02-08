@@ -1,8 +1,11 @@
-package entities
+//package entities
 
 // Factory method to create entities based on type
-func Create(entityType EntityType) actor {
-	instance := &entityBuilder{}
-	entity := instance.setType(entityType).build()
-	return entity
-}
+//func Create(entityType EntityType) actor {
+	//switch entityType {
+	//case rabbit:
+		//return &
+	//}
+//}
+
+
