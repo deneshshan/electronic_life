@@ -1,49 +1,60 @@
-//package engine_entities
+package engine_entities
 
-//type Collidable interface {
-//IsSolid() bool
-//Collide(Collidable)
-//}
+type Positionable interface {
+	SetPosition(Position)
+}
 
-//type Actor interface {
-//Act()
-//}
+type EntityType int
 
-//type stateMachine interface {
-//enterState(e *fsm.Event)
-//}
+const (
+	Carrot = iota
+	Rabbit
+)
 
-//type Entity struct {
-//Collidable
-//Actor
-//Type EntityType
-//FSM  *fsm.FSM
-//}
+type ActionType int
 
-//func (ent Entity) act() {
-//}
+const (
+	Spawn = iota
+	Move
+	Feed
+)
 
-//func (ent Entity) enterState(e *fsm.Event) {
-//}
+type ActionDirection int
 
-//type Destroyable interface {
-//Destroy() error
-//}
+const (
+	North = iota
+	NortWest
+	West
+	SouthWest
+	South
+	SouthEast
+	East
+	NortEast
+)
 
-//type Action struct {
-//}
+type Position struct {
+	X int
+	Y int
+}
 
-//type ResultValue int
+type Action struct {
+	Type            ActionType
+	Direction       ActionDirection
+	CurrentPosition Position
+	TargetPosition  Position
+}
 
-//const (
-//OK = iota
-//)
+type Entity struct {
+	Positionable
+	position     Position
+	health       int
+	fsm          *fsm.FSM
+	Tick         chan struct{}
+	Done         chan struct{}
+	NextAction   chan Action
+	healthUpdate chan int
+}
 
-//type Result struct {
-//Value ResultValue
-//}
-
-//type Entity {
-//actions <-chan  Action
-//results ->chan  Result
-//}
+func (ent *Entity) SetPosition(position Position) {
+	ent.position = position
+}
