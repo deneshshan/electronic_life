@@ -2,8 +2,6 @@ package engine
 
 import (
 	"sync"
-
-	maps "github.com/deneshshan/electronic_life/engine/maps"
 )
 
 var (
@@ -54,13 +52,13 @@ func (builder *EngineBuilder) Build() *Engine {
 	engine := Engine{}
 
 	builder.built.Do(func() {
-		map_builder := maps.GetMapBuilder()
+		map_builder := GetMapBuilder()
 		map_builder.Width(builder.width).Height(builder.height).PercentageWalls(builder.percentageWalls)
 		levelMap := map_builder.Build()
 
-		displayConnector := make(chan *maps.Map, 2)
+		displayConnector := make(chan *State, 2)
 
-		engine.levelMap = levelMap
+		engine.state = levelMap
 		engine.DisplayConnector = displayConnector
 		engine.Fps = builder.fps
 	})

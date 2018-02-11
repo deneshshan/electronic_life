@@ -1,18 +1,14 @@
 package engine
 
-import (
-	maps "github.com/deneshshan/electronic_life/engine/maps"
-)
-
 type Engine struct {
-	levelMap         *maps.Map
-	DisplayConnector chan *maps.Map
+	state            *State
+	DisplayConnector chan *State
 	Fps              float64
 }
 
-func (engine *Engine) BaseLevel() [][]maps.TileChar {
-	mapp := *engine.levelMap
-	return mapp.Tiles()
+func (engine *Engine) BaseLevel() [][]MapTile {
+	state := *engine.state
+	return state.Tiles()
 }
 
 func (engine *Engine) work() {

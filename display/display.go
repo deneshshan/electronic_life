@@ -3,11 +3,10 @@ package display
 import (
 	tl "github.com/JoelOtter/termloop"
 	"github.com/deneshshan/electronic_life/engine"
-	maps "github.com/deneshshan/electronic_life/engine/maps"
 )
 
 type Display struct {
-	engineConnector chan *maps.Map
+	engineConnector chan *engine.State
 }
 
 func NewDisplay(engine *engine.Engine) {

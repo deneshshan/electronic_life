@@ -1,4 +1,4 @@
-package engine_maps
+package engine
 
 import (
 	"math/rand"
@@ -12,13 +12,26 @@ var (
 	map_builder MapBuilder
 )
 
+type TileChar int
+
+const (
+	EmptySpace = iota
+	Wall
+)
+
+type MapTile struct {
+	X    int
+	Y    int
+	Tile TileChar
+}
+
 type MapBuilder struct {
 	width           int
 	height          int
 	percentageWalls int
 	built           sync.Once
 	update          chan MapTile
-	mapp            *Map
+	state           *State
 }
 
 func GetMapBuilder() *MapBuilder {
@@ -44,41 +57,41 @@ func (builder *MapBuilder) PercentageWalls(percentageWalls int) *MapBuilder {
 	return builder
 }
 
-func (builder *MapBuilder) Build() *Map {
-	mapp := &Map{}
+func (builder *MapBuilder) Build() *State {
+	state := &State{}
 
 	builder.built.Do(func() {
 
 		tiles := builder.initilizeLayout()
 		builder.update = make(chan MapTile, 20)
 
-		mapp = newMap(tiles, builder.update)
-		builder.mapp = mapp
+		state = newState(tiles, builder.update)
+		builder.state = state
 
-		go mapp.UpdateTiles()
+		go state.UpdateTiles()
 
-		done := mapp.StartUpdate(builder.area())
+		done := state.StartUpdate(builder.area())
 		builder.generateRandomWalls()
 		<-done
 
 		for count := 0; count <= 5; count++ {
-			builder.generateCaverns(mapp.Tiles())
+			builder.generateCaverns(state.Tiles())
 		}
 
 	})
 
-	return mapp
+	return state
 }
 
 func (builder *MapBuilder) area() int {
 	return builder.width * builder.height
 }
 
-func (builder *MapBuilder) initilizeLayout() *[][]TileChar {
-	tiles := make([][]TileChar, builder.width)
+func (builder *MapBuilder) initilizeLayout() *[][]MapTile {
+	tiles := make([][]MapTile, builder.width)
 
 	for row := range tiles {
-		tiles[row] = make([]TileChar, builder.height)
+		tiles[row] = make([]MapTile, builder.height)
 	}
 
 	return &tiles
@@ -134,12 +147,12 @@ func (builder *MapBuilder) setTile(column int, row int, tile TileChar) {
 	builder.update <- update
 }
 
-func (builder *MapBuilder) generateCaverns(tiles [][]TileChar) {
-	mapp := builder.mapp
+func (builder *MapBuilder) generateCaverns(tiles [][]MapTile) {
+	state := builder.state
 
 	for column := 0; column < builder.width; column++ {
 		for row := 0; row < builder.height; row++ {
-			done := mapp.StartUpdate(1)
+			done := state.StartUpdate(1)
 
 			tile := builder.surroundingTile(tiles, column, row)
 			builder.setTile(column, row, tile)
@@ -149,10 +162,10 @@ func (builder *MapBuilder) generateCaverns(tiles [][]TileChar) {
 	}
 }
 
-func (builder *MapBuilder) surroundingTile(tiles [][]TileChar, column, row int) TileChar {
+func (builder *MapBuilder) surroundingTile(tiles [][]MapTile, column, row int) TileChar {
 	numberSurroundingWalls := builder.countAdjacentWalls(tiles, column, row)
 
-	if tiles[column][row] == Wall {
+	if tiles[column][row].Tile == Wall {
 		if numberSurroundingWalls >= 4 {
 			return Wall
 		} else if numberSurroundingWalls < 2 {
@@ -167,7 +180,7 @@ func (builder *MapBuilder) surroundingTile(tiles [][]TileChar, column, row int) 
 	return EmptySpace
 }
 
-func (builder *MapBuilder) countAdjacentWalls(tiles [][]TileChar, column int, row int) int {
+func (builder *MapBuilder) countAdjacentWalls(tiles [][]MapTile, column int, row int) int {
 	start_col := column - 1
 	end_col := column + 1
 	start_row := row - 1
@@ -188,14 +201,14 @@ func (builder *MapBuilder) countAdjacentWalls(tiles [][]TileChar, column int, ro
 	return wall_count
 }
 
-func (builder *MapBuilder) isConsideredWall(tiles [][]TileChar, column, row int) bool {
+func (builder *MapBuilder) isConsideredWall(tiles [][]MapTile, column, row int) bool {
 	if column < 0 || row < 0 {
 		return true
 	} else if column > builder.width-1 || row > builder.height-1 {
 		return true
-	} else if tiles[column][row] == Wall {
+	} else if tiles[column][row].Tile == Wall {
 		return true
-	} else if tiles[column][row] == EmptySpace {
+	} else if tiles[column][row].Tile == EmptySpace {
 		return false
 	}
 
