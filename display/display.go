@@ -9,7 +9,7 @@ type Display struct {
 	engineConnector chan *engine.State
 }
 
-func NewDisplay(engine *engine.Engine) {
+func New(engine *engine.Engine) {
 	game := tl.NewGame()
 
 	game.Screen().SetFps(engine.Fps)

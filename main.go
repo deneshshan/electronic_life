@@ -19,7 +19,7 @@ func main() {
 	engine_builder.Width(width).Height(height).PercentageWalls(45).Fps(30)
 	engine := engine_builder.Build()
 
-	display.NewDisplay(engine)
+	display.New(engine)
 
 	fmt.Println("Bye!!")
 	os.Exit(0)
