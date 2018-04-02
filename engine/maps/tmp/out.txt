@@ -1,0 +1,5 @@
+=== RUN   TestPercentageWalls
+=== RUN   TestPercentageWalls/Testing_percentage_walls
+0
+exit status 2
+FAIL	github.com/deneshshan/electronic_life/engine/maps	0.025s

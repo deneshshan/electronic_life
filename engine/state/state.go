@@ -4,22 +4,43 @@ import (
 	types "github.com/deneshshan/electronic_life/engine/types"
 )
 
+type IStateReader interface {
+	Read() [][]types.MapTile
+}
+
 // State represents the game state. Currently it is only a tile map of all obstacles
 // and entity positions. Only one State can exist per Engine instance.
 type State struct {
-	tiles *[][]types.MapTile
+	tiles  *[][]types.MapTile
+	width  int
+	height int
 }
 
-func newState(w, h int) *State {
-	tiles := make([][]types.MapTile, h)
+func NewState(width, height int) *State {
 
-	for row := range tiles {
-		tiles[row] = make([]types.MapTile, w)
-	}
-
-	state := State{tiles: &tiles}
+	state := State{width: width, height: height}
+	tiles := state.blankTileMap()
+	state.tiles = &tiles
 
 	return &state
+}
+
+func (st *State) Read() [][]types.MapTile {
+	snapshot := st.blankTileMap()
+
+	copy(snapshot, *st.tiles)
+
+	return snapshot
+}
+
+func (st *State) blankTileMap() [][]types.MapTile {
+	tiles := make([][]types.MapTile, st.height)
+
+	for row := range tiles {
+		tiles[row] = make([]types.MapTile, st.width)
+	}
+
+	return tiles
 }
 
 //}

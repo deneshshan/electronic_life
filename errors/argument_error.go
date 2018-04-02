@@ -1,4 +1,4 @@
-package errors
+package errs
 
 import "fmt"
 
@@ -8,5 +8,5 @@ type ArgumentError struct {
 }
 
 func (e *ArgumentError) Error() string {
-	return fmt.Sprintf("%s - %s", e.arg, e.prob)
+	return fmt.Sprintf("%s - %s", e.Arg, e.Issue)
 }
