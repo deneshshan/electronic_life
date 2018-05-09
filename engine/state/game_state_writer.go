@@ -2,7 +2,7 @@ package state
 
 import (
 	"errors"
-	"sync"
+	"sync/atomic"
 
 	"github.com/deneshshan/electronic_life/engine/types"
 )
@@ -15,8 +15,7 @@ type StateBatchUpdater interface {
 // It is also responsible for creating the state.
 type GameStateWriter struct {
 	state           *State
-	updateCount     int
-	updateCountLock sync.Mutex
+	updateCount     uint64
 	Update          chan types.MapTile
 	UpdateProcessed chan struct{}
 	Done            chan struct{}
@@ -30,7 +29,6 @@ func NewGameStateWriter(state *State) *GameStateWriter {
 	done := make(chan struct{}, 1)
 
 	stateWriter := GameStateWriter{state: state, Update: update, UpdateProcessed: updateProcessed, Done: done}
-
 	go stateWriter.processUpdates()
 
 	return &stateWriter
@@ -66,20 +64,10 @@ func (sw *GameStateWriter) processUpdates() {
 
 // Returns how many updates remaining to be processed.
 func (sw *GameStateWriter) updatesRemaining() int {
-
-	var remaining int
-
-	sw.updateCountLock.Lock()
-	remaining = sw.updateCount
-	sw.updateCountLock.Unlock()
-
-	return remaining
+	return atomic.LoadUint64(sw.updateCount)
 }
 
 // Adds the amount to the current amount of updates to be processed.
 func (sw *GameStateWriter) setUpdates(amount int) {
-
-	sw.updateCountLock.Lock()
-	sw.updateCount = sw.updateCount + amount
-	sw.updateCountLock.Unlock()
+    atomic.AddUint64(sw.updateCount, amount)
 }
